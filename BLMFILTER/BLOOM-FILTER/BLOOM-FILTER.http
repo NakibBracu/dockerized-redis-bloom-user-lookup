@@ -1,0 +1,6 @@
+@BLOOM_FILTER_HostAddress = http://localhost:5112
+
+GET {{BLOOM_FILTER_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

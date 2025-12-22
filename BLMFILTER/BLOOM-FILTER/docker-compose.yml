@@ -1,0 +1,41 @@
+﻿services:
+  bloom-filter-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=BloomFilterTest;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;
+      - Redis__ConnectionString=redis:6379
+    depends_on:
+      - redis
+      - sqlserver
+    container_name: bloom_api
+    restart: unless-stopped
+
+  redis:
+    image: redis/redis-stack:latest  # This includes RedisBloom!
+    ports:
+      - "6379:6379"
+      - "8001:8001"  # RedisInsight UI
+    volumes:
+      - redis_data:/data
+    container_name: bloom_redis
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Password123
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    container_name: bloom_sqlserver
+
+volumes:
+  redis_data:
+  sqlserver_data:
